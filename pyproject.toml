@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "zq-auth-sdk"
 version = "0.1.0"
-description = "自强统一认证服务 Python SDK"
+description = "自强统一认证 Python SDK"
 authors = ["Nagico <yjr888@vip.qq.com>"]
 license = "MIT"
 readme = "README.md"
@@ -9,7 +9,6 @@ keywords = ["Ziqiang Studio", "sso", "Python SDK"]
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
