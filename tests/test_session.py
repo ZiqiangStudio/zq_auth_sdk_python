@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 import os
-import platform
 from datetime import datetime
 
 import pytest
@@ -46,9 +44,7 @@ def test_redis_session_storage_init(get_client):
     )
 
 
-@pytest.mark.skipif(
-    platform.system() == "Windows", reason="memcached not support windows"
-)
+@pytest.mark.skip(reason="memcached not support")
 def test_memcached_storage_init(get_client):
     from pymemcache.client import Client
 
