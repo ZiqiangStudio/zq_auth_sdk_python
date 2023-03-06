@@ -14,10 +14,10 @@
     <img src="https://readthedocs.org/projects/zq-django-util/badge/?version=latest" alt="Documentation Status" />
   </a>
   <a href="https://codecov.io/gh/ZiqiangStudio/zq_auth_sdk_python" >
-    <img src="https://codecov.io/gh/ZiqiangStudio/zq_auth_sdk_python/branch/master/graph/badge.svg" alt="cov"/>
+    <img src="https://codecov.io/gh/ZiqiangStudio/zq_auth_sdk_python/branch/main/graph/badge.svg?token=CDhJ2Au01H" alt="cov"/>
   </a>
   <a href="https://pypi.org/project/zq-django-util/">
-  <img src="https://img.shields.io/pypi/v/zq-django-util" alt="pypi">
+  <img src="https://img.shields.io/pypi/v/zq-auth-sdk" alt="pypi">
   </a>
 </p>
 <!-- markdownlint-enable MD033 -->
@@ -45,3 +45,7 @@ poetry add zq-auth-sdk
 - 使用 zq-django-util
 
 > TODO
+
+## 测试覆盖率
+
+![cov](https://codecov.io/gh/ZiqiangStudio/zq_auth_sdk_python/branch/main/graphs/sunburst.svg?token=CDhJ2Au01H)
