@@ -126,5 +126,5 @@ def get_all_changelog(
 if __name__ == "__main__":
     main(
         path_repo=r"..",
-        stopping_commit="origin/master",
+        stopping_commit="origin/main",
     )

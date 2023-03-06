@@ -100,6 +100,9 @@ def set_version():
     while commit_message != commit_content:
         if ask_confirm(f"Waiting for commit changes\n\n{commit_content}\n\n"):
             pass
+        commit_message = subprocess.check_output(command, shell=True).decode(
+            "utf-8"
+        )
 
     print("Success.")
 
