@@ -1,0 +1,15 @@
+{
+	"code": "00000",
+	"detail": "",
+	"msg": "",
+	"data": {
+		"user": {
+			"id": 9,
+			"username": "zq_test",
+			"type": 2,
+			"is_active": true,
+			"is_superuser": false
+		},
+		"time": "2023-03-06T18:26:53.713365+08:00"
+	}
+}

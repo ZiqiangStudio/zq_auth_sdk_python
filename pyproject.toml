@@ -1,0 +1,125 @@
+[tool.poetry]
+name = "zq-auth-sdk"
+version = "0.1.0"
+description = "自强统一认证服务 Python SDK"
+authors = ["Nagico <yjr888@vip.qq.com>"]
+license = "MIT"
+readme = "README.md"
+keywords = ["Ziqiang Studio", "sso", "Python SDK"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities"
+]
+
+repository = "https://github.com/ZiqiangStudio/zq_auth_sdk_python.git"
+homepage = "https://github.com/ZiqiangStudio/zq_auth_sdk_python"
+documentation = "https://docs.auth.ziqiang.net.cn"
+
+[[tool.poetry.source]]
+name = "tsinghua"
+default = true
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+
+[tool.poetry.dependencies]
+python = ">=3.8.1,<4.0"
+requests = ">=2.4.3"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^2.20.0"
+black = "^22.12.0"
+isort = "^5.11.4"
+ipython = "^8.7.0"
+pytest = "^7.2.1"
+pytest-cov = "^4.0.0"
+pytest-django = "^4.5.2"
+pytest-mock = "^3.10.0"
+pytest-xdist = "^3.2.0"
+flake8-pyproject = "^1.2.2"
+pymemcache = "^3.5.0"
+cryptography = "^39.0.2"
+requests-mock = "^1.10.0"
+fakeredis = "^2.10.0"
+auto-changelog = "^0.6.0"
+
+
+[tool.poetry.urls]
+issues = "https://github.com/ZiqiangStudio/zq_auth_sdk_python/issues"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+skip = ["migrations"]
+include_trailing_comma = true
+use_parentheses = true
+multi_line_output = 3
+line_length = 80
+
+[tool.flake8]
+ignore = ['E203', 'E266', 'E501', 'W503']
+max-line-length = 80
+max-complexity = 18
+select = ['B', 'C', 'E', 'F', 'W', 'T4']
+
+
+# not using pytest-cov default, to support pycharm coverage
+[tool.pytest.ini_options]
+addopts = """
+    -s -v
+"""
+
+[tool.coverage.run]
+omit =[
+  '*/migrations/*',
+  '*/__version__.py',
+  '*/tests/*',
+  '*/types.py',
+  '*/tests.py',
+  '*/setup.py',
+  '*/setup.cfg',
+  '*/.tox/*',
+  '*/.venv/*',
+  'server/settings/*',
+  'server/asgi.py',
+  'server/wsgi.py',
+]
+
+[tool.coverage.report]
+exclude_lines =[
+  'pragma: no cover',
+  'def __repr__',
+  'if TYPE_CHECKING',
+  'raise AssertionError',
+  'raise NotImplementedError',
+  'if 0:',
+  'if __name__ == .__main__.:',
+  'class .*\bProtocol\):',
+  '@(abc\.)?abstractmethod',
+]
