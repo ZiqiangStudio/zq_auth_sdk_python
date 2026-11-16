@@ -26,9 +26,7 @@ class RedisStorage(SessionStorage):
         if value is None:
             self.delete(key)
             return
-        self.redis.set(
-            self.key_name(key), json.dumps(value), ex=ttl
-        )
+        self.redis.set(self.key_name(key), json.dumps(value), ex=ttl)
 
     def delete(self, key):
         self.redis.delete(self.key_name(key))

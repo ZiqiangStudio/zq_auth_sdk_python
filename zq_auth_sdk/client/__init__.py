@@ -21,9 +21,7 @@ class ZqAuthClient(BaseZqAuthClient):
         timeout: int | None = None,
         auto_retry: bool = True,
     ):
-        super().__init__(
-            appid, api_base_url, storage, timeout, auto_retry
-        )
+        super().__init__(appid, api_base_url, storage, timeout, auto_retry)
         self.secret = secret
         self.refresh_access_token()
 

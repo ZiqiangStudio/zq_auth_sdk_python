@@ -237,7 +237,9 @@ class BaseZqAuthClient:
                 kwargs["headers"] = {}
             kwargs["headers"]["Authorization"] = f"Bearer {self.access_token}"
 
-        response = self._http.request(method=method, url=url, **kwargs)  # 发起请求
+        response = self._http.request(
+            method=method, url=url, **kwargs
+        )  # 发起请求
 
         logger.debug("Request: %s %s", method, url)
 
