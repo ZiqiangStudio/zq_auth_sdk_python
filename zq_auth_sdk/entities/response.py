@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum, unique
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
 from requests import Response
 
@@ -141,7 +141,7 @@ class ZqAuthResponse:
         return self.data
 
     def check_exception(
-        self, exception: Type[ZqAuthClientException] = ZqAuthClientException
+        self, exception: type[ZqAuthClientException] = ZqAuthClientException
     ):
         """
         检测 code 并 raise 异常

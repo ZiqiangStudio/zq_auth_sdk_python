@@ -1,7 +1,5 @@
-import logging
-
-from zq_auth_sdk.client import ZqAuthClient  # noqa
-from zq_auth_sdk.exceptions import (  # noqa
+from zq_auth_sdk.client import ZqAuthClient  # noqa: F401
+from zq_auth_sdk.exceptions import (  # noqa: F401
     APILimitedException,
     AppLoginFailedException,
     ThirdLoginFailedException,
@@ -10,8 +8,4 @@ from zq_auth_sdk.exceptions import (  # noqa
     ZqAuthException,
 )
 
-__version__ = "0.1.0"
-__author__ = "Nagico"
-
-# Set default logging handler to avoid "No handler found" warnings.
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+__version__ = "0.2.0"

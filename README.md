@@ -1,51 +1,30 @@
-<div align="center">
-
 # zq-auth-sdk-python
-**自强统一认证 Python SDK**
 
-<!-- markdownlint-disable-next-line MD036 -->
-</div>
+自强统一认证 Python SDK。它只依赖 `requests`，可以在 Django、Flask、FastAPI 或普通脚本里使用。
 
-<p align="center">
-  <a href="https://github.com/ZiqiangStudio/zq_auth_sdk_python/actions/workflows/test.yml">
-    <img src="https://github.com/ZiqiangStudio/zq_auth_sdk_python/actions/workflows/test.yml/badge.svg" alt="CI">
-  </a>
-  <a href="https://zq_auth_sdk_python.readthedocs.io/en/latest/?badge=latest">
-    <img src="https://readthedocs.org/projects/zq-django-util/badge/?version=latest" alt="Documentation Status" />
-  </a>
-  <a href="https://codecov.io/gh/ZiqiangStudio/zq_auth_sdk_python" >
-    <img src="https://codecov.io/gh/ZiqiangStudio/zq_auth_sdk_python/branch/main/graph/badge.svg?token=CDhJ2Au01H" alt="cov"/>
-  </a>
-  <a href="https://pypi.org/project/zq-django-util/">
-  <img src="https://img.shields.io/pypi/v/zq-auth-sdk" alt="pypi">
-  </a>
-</p>
-<!-- markdownlint-enable MD033 -->
+## 依赖
 
-## 简介
-
-## 依赖需求
-
-- Python 3.9+
+Python 3.12+
 
 ## 安装
 
-- 安装 zq-auth-sdk 包
-
-使用 `pip` 安装：
 ```shell
 pip install zq-auth-sdk
 ```
 
-使用 `poetry` 安装：
-```shell
-poetry add zq-auth-sdk
+## 使用
+
+```python
+from zq_auth_sdk import ZqAuthClient
+
+client = ZqAuthClient(
+    appid="your-app-key",
+    secret="your-app-secret",
+    # 测试环境传入 api_base_url="https://api.test.cas.ziqiang.net.cn"
+)
+
+union_id = client.app.sso("one-time-code")["union_id"]
+user = client.app.user_info(union_id, detail=True)
 ```
 
-- 使用 zq-django-util
-
-> TODO
-
-## 测试覆盖率
-
-![cov](https://codecov.io/gh/ZiqiangStudio/zq_auth_sdk_python/branch/main/graphs/sunburst.svg?token=CDhJ2Au01H)
+客户端会在需要时自动完成 app 登录和 token 刷新。`storage` 默认用进程内存；多进程服务传入自己的 `SessionStorage` 实现或 `RedisStorage`。

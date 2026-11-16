@@ -7,12 +7,3 @@ class SessionStorage:
 
     def delete(self, key):
         raise NotImplementedError()
-
-    def __getitem__(self, key):
-        self.get(key)
-
-    def __setitem__(self, key, value):
-        self.set(key, value)
-
-    def __delitem__(self, key):
-        self.delete(key)

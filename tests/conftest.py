@@ -9,6 +9,7 @@ from zq_auth_sdk.storage import SessionStorage
 
 _TESTS_PATH = Path(__file__).parent
 _FIXTURE_PATH = _TESTS_PATH / "fixtures"
+TEST_API_BASE_URL = "https://auth.test"
 
 
 def match_data(request, context):
@@ -77,7 +78,7 @@ def api_mock(requests_mock: Mocker):
             response = json.load(f, strict=False)
         requests_mock.register_uri(
             method,
-            f"https://api.cas.ziqiang.net.cn{url}",
+            f"{TEST_API_BASE_URL}{url}",
             json=response,
             additional_matcher=lambda request: match_params_and_data(
                 request, params, data
@@ -123,7 +124,12 @@ def get_client(post_mock):
         storage: SessionStorage | None = None,
     ):
         post_mock("/auth/apps/")
-        return ZqAuthClient(appid=appid, secret=secret, storage=storage)
+        return ZqAuthClient(
+            appid=appid,
+            secret=secret,
+            api_base_url=TEST_API_BASE_URL,
+            storage=storage,
+        )
 
     return _get_client
 

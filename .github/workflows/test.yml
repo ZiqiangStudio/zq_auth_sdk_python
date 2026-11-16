@@ -16,7 +16,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Load cached Poetry installation
         id: cached-poetry
         uses: actions/cache@v3
@@ -39,9 +39,7 @@ jobs:
             venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
             venv-${{ runner.os }}-
       - name: Install dependencies
-        run: |
-          poetry export --with dev --output requirements.txt --without-urls
-          poetry run pip install -r requirements.txt
+        run: poetry install --with dev
       - name: Style check
         run: |
           poetry run black --check zq_auth_sdk

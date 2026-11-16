@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zq-auth-sdk"
-version = "0.1.0"
+version = "0.2.0"
 description = "自强统一认证 Python SDK"
 authors = ["Nagico <yjr888@vip.qq.com>"]
 license = "MIT"
@@ -9,9 +9,9 @@ keywords = ["Ziqiang Studio", "sso", "Python SDK"]
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities"
@@ -21,14 +21,9 @@ repository = "https://github.com/ZiqiangStudio/zq_auth_sdk_python.git"
 homepage = "https://github.com/ZiqiangStudio/zq_auth_sdk_python"
 documentation = "https://docs.auth.ziqiang.net.cn"
 
-[[tool.poetry.source]]
-name = "tsinghua"
-default = true
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-
 [tool.poetry.dependencies]
-python = ">=3.8.1,<4.0"
-requests = ">=2.4.3"
+python = ">=3.12,<4.0"
+requests = ">=2.31,<3"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^2.20.0"
@@ -37,12 +32,9 @@ isort = "^5.11.4"
 ipython = "^8.7.0"
 pytest = "^7.2.1"
 pytest-cov = "^4.0.0"
-pytest-django = "^4.5.2"
 pytest-mock = "^3.10.0"
 pytest-xdist = "^3.2.0"
 flake8-pyproject = "^1.2.2"
-pymemcache = "^3.5.0"
-cryptography = "^39.0.2"
 requests-mock = "^1.10.0"
 fakeredis = "^2.10.0"
 auto-changelog = "^0.6.0"

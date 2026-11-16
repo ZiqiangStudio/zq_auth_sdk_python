@@ -15,23 +15,27 @@ from zq_auth_sdk.exceptions import (
 )
 from zq_auth_sdk.storage import SessionStorage
 from zq_auth_sdk.storage.memorystorage import MemoryStorage
-from zq_auth_sdk.utils import now
+
+DEFAULT_API_BASE_URL = "https://api.cas.ziqiang.net.cn"
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_datetime(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
 def _is_api_endpoint(obj):
     return isinstance(obj, BaseZqAuthAPI)
 
 
-class BaseWeChatClient:
-    API_BASE_URL: str = ""
-
-    ACCESS_LIFETIME: timedelta | None = None  # access token的有效期
-    REFRESH_LIFETIME: timedelta | None = None  # refresh token的有效期
+class BaseZqAuthClient:
+    ACCESS_LIFETIME: timedelta | None = None
+    REFRESH_LIFETIME: timedelta | None = None
 
     _http: requests.Session
     appid: str
+    api_base_url: str
     storage: SessionStorage
     timeout: int | None
     auto_retry: bool
@@ -41,31 +45,26 @@ class BaseWeChatClient:
         api_endpoints = inspect.getmembers(self, _is_api_endpoint)
         for name, api in api_endpoints:
             api_cls = type(api)
-            api = api_cls(self)
-            setattr(self, name, api)
+            setattr(self, name, api_cls(self))
         return self
 
     def __init__(
         self,
         appid: str,
-        access_token: str | None = None,
+        api_base_url: str,
         storage: SessionStorage | None = None,
         timeout: int | None = None,
         auto_retry: bool = True,
     ):
+        if not appid or not api_base_url:
+            raise ValueError("appid and api_base_url are required")
+
         self._http = requests.Session()
         self.appid = appid
+        self.api_base_url = api_base_url.rstrip("/")
         self.storage = storage or MemoryStorage()
         self.timeout = timeout
         self.auto_retry = auto_retry
-
-        if access_token:
-            self.storage.set(self.access_token_key, access_token)
-
-        if self.API_BASE_URL == "":
-            raise Exception("API_BASE_URL is not defined")
-        elif self.API_BASE_URL.endswith("/"):
-            self.API_BASE_URL = self.API_BASE_URL[:-1]
 
     # region storage
 
@@ -86,7 +85,9 @@ class BaseWeChatClient:
                 # user provided access_token, just return it
                 return access_token
 
-            if self.expire_time - now() > timedelta(seconds=60):
+            if self.expire_time - datetime.now().astimezone() > timedelta(
+                seconds=60
+            ):
                 return access_token
 
         self.refresh_access_token()
@@ -110,10 +111,8 @@ class BaseWeChatClient:
         """
         access token 过期时间
         """
-        iso_time = self.storage.get(self.access_token_expire_time_key, None)
-        return (
-            datetime.fromisoformat(iso_time) if iso_time is not None else None
-        )
+        iso_time = self.storage.get(self.access_token_expire_time_key)
+        return _parse_datetime(iso_time) if iso_time is not None else None
 
     @expire_time.setter
     def expire_time(self, value: datetime):
@@ -137,6 +136,7 @@ class BaseWeChatClient:
     def refresh_token(self, value: str | None):
         if value is None:
             self.storage.delete(self.refresh_token_key)
+            return
         self.storage.set(self.refresh_token_key, value, self.REFRESH_LIFETIME)
 
     # endregion
@@ -151,9 +151,6 @@ class BaseWeChatClient:
     @property
     def id(self) -> int:
         """ZqAuth id"""
-        res = self.storage.get(self.id_key, None)
-        if res is None:
-            self._login()
         return self.storage.get(self.id_key)
 
     @id.setter
@@ -172,9 +169,6 @@ class BaseWeChatClient:
     @property
     def name(self) -> str:
         """ZqAuth name"""
-        res = self.storage.get(self.name_key, None)
-        if res is None:
-            self._login()
         return self.storage.get(self.name_key)
 
     @name.setter
@@ -193,9 +187,6 @@ class BaseWeChatClient:
     @property
     def username(self) -> str:
         """ZqAuth username"""
-        res = self.storage.get(self.username_key, None)
-        if res is None:
-            self._login()
         return self.storage.get(self.username_key)
 
     @username.setter
@@ -230,13 +221,8 @@ class BaseWeChatClient:
         :param kwargs:
         :return: JSON 返回
         """
-        if not url_or_endpoint.startswith(
-            ("http://", "https://")
-        ):  # 传入 endpoint
-            api_base_url = kwargs.pop("api_base_url", self.API_BASE_URL)
-            if api_base_url.endswith("/"):
-                api_base_url = api_base_url[:-1]
-            url = f"{api_base_url}{url_or_endpoint}"  # base url 拼接到 endpoint 前
+        if not url_or_endpoint.startswith(("http://", "https://")):
+            url = f"{self.api_base_url}{url_or_endpoint}"
         else:
             url = url_or_endpoint
 
@@ -253,7 +239,7 @@ class BaseWeChatClient:
 
         response = self._http.request(method=method, url=url, **kwargs)  # 发起请求
 
-        logger.debug(f"Request: {method} {url}")
+        logger.debug("Request: %s %s", method, url)
 
         return self._handle_result(
             response, method, url, result_processor, auto_retry, **kwargs
@@ -402,12 +388,12 @@ class BaseWeChatClient:
             else:
                 raise e
 
-        self.id = result.get("id")
-        self.name = result.get("name")
-        self.username = result.get("username")
-        self.access_token = result.get("access")
-        self.refresh_token = result.get("refresh", None)
-        self.expire_time = datetime.fromisoformat(result.get("expire_time"))
+        self.id = result["id"]
+        self.name = result["name"]
+        self.username = result["username"]
+        self.access_token = result["access"]
+        self.refresh_token = result.get("refresh")
+        self.expire_time = _parse_datetime(result["expire_time"])
 
     def refresh(self) -> JSONVal:
         """
@@ -423,8 +409,8 @@ class BaseWeChatClient:
 
         try:
             result = self.refresh()
-            self.access_token = result.get("access")
-            self.expire_time = datetime.fromisoformat(result.get("expire_time"))
+            self.access_token = result["access"]
+            self.expire_time = _parse_datetime(result["expire_time"])
         except ZqAuthClientException as e:
             if (
                 e.errcode == ZqAuthResponseType.RefreshTokenInvalid.code

@@ -1,13 +1,13 @@
 import json
 
 from zq_auth_sdk.storage import SessionStorage
-from zq_auth_sdk.utils import to_text
 
 
 class RedisStorage(SessionStorage):
-    def __init__(self, redis, prefix="wechatpy"):
+    def __init__(self, redis, prefix="zq_auth"):
         for method_name in ("get", "set", "delete"):
-            assert hasattr(redis, method_name)
+            if not hasattr(redis, method_name):
+                raise TypeError(f"redis client must implement {method_name}()")
         self.redis = redis
         self.prefix = prefix
 
@@ -15,19 +15,20 @@ class RedisStorage(SessionStorage):
         return f"{self.prefix}:{key}"
 
     def get(self, key, default=None):
-        key = self.key_name(key)
-        value = self.redis.get(key)
+        value = self.redis.get(self.key_name(key))
         if value is None:
             return default
-        return json.loads(to_text(value))
+        if isinstance(value, bytes):
+            value = value.decode("utf-8")
+        return json.loads(value)
 
     def set(self, key, value, ttl=None):
         if value is None:
+            self.delete(key)
             return
-        key = self.key_name(key)
-        value = json.dumps(value)
-        self.redis.set(key, value, ex=ttl)
+        self.redis.set(
+            self.key_name(key), json.dumps(value), ex=ttl
+        )
 
     def delete(self, key):
-        key = self.key_name(key)
-        self.redis.delete(key)
+        self.redis.delete(self.key_name(key))
